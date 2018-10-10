@@ -2,7 +2,8 @@ import React from "react";
 import { Query } from "react-apollo";
 import gql from "graphql-tag";
 import Loading from "./../Loading/index";
-import RepositoryList from "../Repository";
+import RepositoryList, { REPOSITORY_FRAGMENT } from "../Repository";
+import ErrorMessage from "../Error";
 
 const GET_CURRENT_USER = gql`
   {
@@ -15,8 +16,13 @@ const GET_CURRENT_USER = gql`
 
 const Profile = () => (
   <Query query={GET_REPOSITORIES_OF_CURRENT_USER}>
-    {({ data }) => {
-      const { viewer, loading } = data;
+    {({ data, loading, error }) => {
+      if (error) {
+        return <ErrorMessage error={error} />;
+      }
+
+      const { viewer } = data;
+
       if (loading || !viewer) {
         return <Loading />;
       }
@@ -56,6 +62,21 @@ const GET_REPOSITORIES_OF_CURRENT_USER = gql`
       }
     }
   }
+`;
+
+const GET_REPOSITORIES_OF_CURRENT_USER1 = gql`
+  {
+    viewer {
+      repositories(first: 5, orderBy: { direction: DESC, field: STARGAZERS }) {
+        edges {
+          node {
+            ...repository
+          }
+        }
+      }
+    }
+  }
+  ${REPOSITORY_FRAGMENT}
 `;
 
 export default Profile;
