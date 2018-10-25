@@ -33,9 +33,13 @@ const Profile = () => (
 );
 
 const GET_REPOSITORIES_OF_CURRENT_USER = gql`
-  {
+  query($cursor: String) {
     viewer {
-      repositories(first: 5, orderBy: { direction: DESC, field: STARGAZERS }) {
+      repositories(
+        first: 5
+        orderBy: { direction: DESC, field: STARGAZERS }
+        after: $cursor
+      ) {
         edges {
           node {
             id
@@ -59,6 +63,10 @@ const GET_REPOSITORIES_OF_CURRENT_USER = gql`
             viewerSubscription
           }
         }
+      }
+      pageInfo {
+        endCursor
+        hasNextPage
       }
     }
   }
