@@ -35,6 +35,7 @@ const Profile = () => (
           loading={loading}
           repositories={viewer.repositories}
           fetchMore={fetchMore}
+          entry={"viewer"}
         />
       );
     }}
